@@ -4,6 +4,9 @@ import pydot as pyd
 import matplotlib.pyplot as plt
 import os
 
+import tensorflow as tf
+
+
 from sklearn.preprocessing import OneHotEncoder
 from tensorflow.keras.preprocessing import sequence
 from tensorflow.keras.models import Sequential
@@ -100,11 +103,18 @@ y = prepare_y(states)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y)
 
+graph_level_seed = 1
+operation_level_seed = 2
+tf.random.set_seed(graph_level_seed)
+# makes dropout deterministic
+
+
+
 model = Sequential()
 model.add(Bidirectional(LSTM(512, return_sequences=True), backward_layer=LSTM(512, return_sequences=True, go_backwards=True), input_shape=(maxlen,len_vocab)))
-model.add(Dropout(0.2))
+model.add(Dropout(0.2, seed=operation_level_seed))
 model.add(Bidirectional(LSTM(512)))
-model.add(Dropout(0.2))
+model.add(Dropout(0.2, seed=operation_level_seed))
 model.add(Dense(12, activity_regularizer=l2(0.002)))
 model.add(Activation('softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam',metrics=['accuracy'])
