@@ -1,0 +1,57 @@
+body,
+html {
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    font-family: sans-serif;
+}
+
+input,
+input:focus,
+button {
+    border: none;
+    outline: none;
+    background: none;
+}
+
+.content {
+    display: flex;
+    width: 100vw;
+    height: 100vw;
+    flex-direction: column;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.output {
+    height: 60vh;
+}
+
+.input {
+    height: 40vh;
+}
+
+.input_form {
+    display: flex;
+    border-radius: 5px;
+    border: 2px solid rgb(235, 235, 235);
+    overflow: hidden;
+    height: 50px;
+}
+
+.textInput {
+    height: 100%;
+    padding-left: 20px;
+}
+
+.submit, .submit:active, .submit:focus {
+    border-left: 2px solid rgb(235, 235, 235);
+    height: 100%;
+    padding: 20px;
+    line-height: 100%;
+}
