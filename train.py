@@ -1,23 +1,42 @@
-import pandas as pd
-import numpy as np
-import pydot as pyd
-import matplotlib.pyplot as plt
 import os
+os.environ['PYTHONHASHSEED'] = '0'
+os.environ['CUDA_VISIBLE_DEVICES']='-1'
+os.environ['TF_CUDNN_USE_AUTOTUNE'] ='0'
 
+import numpy as np
+import random as rn
 import tensorflow as tf
 
+rn.seed(1)
+np.random.seed(1)
 
-from sklearn.preprocessing import OneHotEncoder
-from tensorflow.keras.preprocessing import sequence
+# set random seed for tensorflow
+graph_level_seed = 1
+operation_level_seed = 2
+tf.random.set_seed(graph_level_seed)
+
+
+
+from tensorflow.compat.v1.keras import backend as k
+config = tf.compat.v1.ConfigProto(intra_op_parallelism_threads=1, inter_op_parallelism_threads=1,
+allow_soft_placement=True, device_count = {'CPU': 1})
+sess = tf.compat.v1.Session(graph=tf.compat.v1.get_default_graph(),config=config)
+k.set_session(sess)
+
+# force use of one thread only
+tf.config.threading.set_intra_op_parallelism_threads(1)
+tf.config.threading.set_inter_op_parallelism_threads(1)
+
+
+import pandas as pd
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Embedding, Dense, Activation, Dropout, LSTM, Bidirectional
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.regularizers import l2
-from tensorflow.keras.utils import plot_model
-from sklearn.model_selection import train_test_split
 
 
+# configuration variables
 maxlen = 40
 labels = 12
 vocab = []
@@ -25,6 +44,7 @@ len_vocab = 0
 char_index = []
 
 
+# read data
 col_list = ["name", "state"]
 df = pd.read_csv('data/geographic_names_dataset.csv', sep=";", usecols=col_list)
 
@@ -88,36 +108,26 @@ def prepare_y(y):
     return new_list
 
 
-
 X = []
 y = []
-
-
-
-
 
 
 X = prepare_X(names)
 y = prepare_y(states)
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y)
-
-graph_level_seed = 1
-operation_level_seed = 2
-tf.random.set_seed(graph_level_seed)
-# makes dropout deterministic
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 
 
 
 model = Sequential()
-model.add(Bidirectional(LSTM(512, return_sequences=True), backward_layer=LSTM(512, return_sequences=True, go_backwards=True), input_shape=(maxlen,len_vocab)))
-model.add(Dropout(0.2, seed=operation_level_seed))
+model.add(Bidirectional(LSTM(512, return_sequences=True), backward_layer=LSTM(512, return_sequences=True, go_backwards=True), input_shape=(maxlen, len_vocab)))
+#model.add(Dropout(0.2, seed=operation_level_seed))
 model.add(Bidirectional(LSTM(512)))
-model.add(Dropout(0.2, seed=operation_level_seed))
+#model.add(Dropout(0.2, seed=operation_level_seed))
 model.add(Dense(12, activity_regularizer=l2(0.002)))
 model.add(Activation('softmax'))
-model.compile(loss='categorical_crossentropy', optimizer='adam',metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 callback = EarlyStopping(monitor='val_loss', patience=5)
 mc = ModelCheckpoint('best_model_9.h5', monitor='val_loss', mode='min', verbose=1)
@@ -125,5 +135,4 @@ reduce_lr_acc = ReduceLROnPlateau(monitor='val_accuracy', factor=0.1, patience=2
 
 
 batch_size = 256
-history = model.fit(X_train, y_train, batch_size=batch_size, epochs=15, verbose=1, validation_data =(X_test, y_test), callbacks=[callback, mc, reduce_lr_acc])
-
+history = model.fit(X_train, y_train, batch_size=batch_size, epochs=1, verbose=1, validation_data=(X_test, y_test), callbacks=[callback, mc], shuffle=False)
