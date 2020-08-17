@@ -5,16 +5,14 @@ os.environ['TF_CUDNN_USE_AUTOTUNE'] ='0'
 
 import numpy as np
 import random as rn
-import tensorflow as tf
-
 rn.seed(1)
 np.random.seed(1)
 
 # set random seed for tensorflow
+import tensorflow as tf
 graph_level_seed = 1
 operation_level_seed = 2
 tf.random.set_seed(graph_level_seed)
-
 
 
 from tensorflow.compat.v1.keras import backend as k
@@ -26,6 +24,10 @@ k.set_session(sess)
 # force use of one thread only
 tf.config.threading.set_intra_op_parallelism_threads(1)
 tf.config.threading.set_inter_op_parallelism_threads(1)
+
+
+from tensorflow.compat.v1.keras.backend import manual_variable_initialization
+manual_variable_initialization(True)
 
 
 import pandas as pd
@@ -130,9 +132,9 @@ model.add(Activation('softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 callback = EarlyStopping(monitor='val_loss', patience=5)
-mc = ModelCheckpoint('best_model_9.h5', monitor='val_loss', mode='min', verbose=1)
+mc = ModelCheckpoint('best_model', monitor='val_loss', mode='min', verbose=1)
 reduce_lr_acc = ReduceLROnPlateau(monitor='val_accuracy', factor=0.1, patience=2, verbose=1, min_delta=1e-4, mode='max')
 
 
 batch_size = 256
-history = model.fit(X_train, y_train, batch_size=batch_size, epochs=1, verbose=1, validation_data=(X_test, y_test), callbacks=[callback, mc], shuffle=False)
+history = model.fit(X_train, y_train, batch_size=batch_size, epochs=1, verbose=1, validation_data=(X_test, y_test), callbacks=[callback, mc, reduce_lr_acc], shuffle=False)
