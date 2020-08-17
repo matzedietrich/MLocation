@@ -8,10 +8,14 @@
 
 <body>
   <div class="content">
-    <div class="output container">Map</div>
+    <div class="output container">
+      {% if prediction %}
+      <p>{{ prediction }}</p>
+      {% endif %}
+    </div>
     <div class="input container">
-      <form class="input_form" action="/action_page.php">
-        <input class="textInput" autocomplete="off" type="text" id="name" name="name">
+      <form class="input_form" action="/" method="POST">
+        <input class="textInput" autocomplete="off" placeholder="some name" type="text" id="name" name="name">
         <input class="submit" type="submit" value="Predict">
       </form>
     </div>

@@ -5,15 +5,15 @@ os.environ['TF_CUDNN_USE_AUTOTUNE'] ='0'
 
 import numpy as np
 import random as rn
-import tensorflow as tf
-
 rn.seed(1)
 np.random.seed(1)
 
 # set random seed for tensorflow
+import tensorflow as tf
 graph_level_seed = 1
 operation_level_seed = 2
 tf.random.set_seed(graph_level_seed)
+
 
 
 
@@ -26,6 +26,11 @@ k.set_session(sess)
 # force use of one thread only
 tf.config.threading.set_intra_op_parallelism_threads(1)
 tf.config.threading.set_inter_op_parallelism_threads(1)
+
+
+
+from tensorflow.compat.v1.keras.backend import manual_variable_initialization
+manual_variable_initialization(True)
 
 import pandas as pd
 
@@ -70,33 +75,30 @@ def prepare_X(X):
     return new_list
 
 
-X_pred = []
-
-
-model = tf.keras.models.load_model('best_model_9.h5')
-
-
-new_names = ["Thören", "Testhoven", "Marburg"]
-X_pred = prepare_X(new_names)
-
-with tf.device("/CPU:0"):
-    prediction = model.predict(X_pred)
-
-
-dict_answer = ['Schleswig-Holstein', 'Niedersachsen', 'Nordrhein-Westfalen', 'Hessen', 'Rheinland-Pfalz', 'Baden-Württemberg', 'Bayern', 'Brandenburg', 'Mecklenburg-Vorpommern', 'Sachsen', 'Sachsen-Anhalt', 'Thüringen']
-
-
 def pred(new_names, prediction, dict_answer):
     return_results = []
     k = 0
     for i in prediction:
-        print(i)
         return_results.append([new_names[k], dict_answer[np.argmax(i)]])
         k += 1
     return return_results
 
 
-print(pred(new_names, prediction, dict_answer))
+X_pred = []
+
+model = tf.keras.models.load_model('best_model')
+dict_answer = ['Schleswig-Holstein', 'Niedersachsen', 'Nordrhein-Westfalen', 'Hessen', 'Rheinland-Pfalz', 'Baden-Württemberg', 'Bayern', 'Brandenburg', 'Mecklenburg-Vorpommern', 'Sachsen', 'Sachsen-Anhalt', 'Thüringen']
+
+
+
+
+def predictStateFrom(input):
+    new_names = [input]
+    X_pred = prepare_X(new_names)
+
+    with tf.device("/CPU:0"):
+        prediction = model.predict(X_pred)
+        return pred(new_names, prediction, dict_answer)
 
 
 
