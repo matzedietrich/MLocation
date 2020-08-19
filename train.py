@@ -50,7 +50,7 @@ char_index = []
 col_list = ["name", "state"]
 df = pd.read_csv('data/geographic_names_dataset.csv', sep=";", usecols=col_list)
 
-names = df['name']
+names = df['name'].apply(lambda x: str(x).lower())
 states = df['state']
 
 
@@ -58,6 +58,8 @@ vocab = set(' '.join([str(i) for i in names]))
 vocab.add('END')
 len_vocab = len(vocab)
 char_index = dict((c, i) for i, c in enumerate(vocab))
+
+print(char_index)
 
 
 def set_flag(i):
@@ -124,17 +126,22 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 
 model = Sequential()
 model.add(Bidirectional(LSTM(512, return_sequences=True), backward_layer=LSTM(512, return_sequences=True, go_backwards=True), input_shape=(maxlen, len_vocab)))
-#model.add(Dropout(0.2, seed=operation_level_seed))
+model.add(Dropout(0.3, seed=operation_level_seed))
 model.add(Bidirectional(LSTM(512)))
-#model.add(Dropout(0.2, seed=operation_level_seed))
+model.add(Dropout(0.3, seed=operation_level_seed))
 model.add(Dense(12, activity_regularizer=l2(0.002)))
 model.add(Activation('softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 callback = EarlyStopping(monitor='val_loss', patience=5)
-mc = ModelCheckpoint('best_model', monitor='val_loss', mode='min', verbose=1)
+mc = ModelCheckpoint('test_model2', monitor='val_loss', mode='min', verbose=1)
 reduce_lr_acc = ReduceLROnPlateau(monitor='val_accuracy', factor=0.1, patience=2, verbose=1, min_delta=1e-4, mode='max')
 
 
-batch_size = 256
-history = model.fit(X_train, y_train, batch_size=batch_size, epochs=1, verbose=1, validation_data=(X_test, y_test), callbacks=[callback, mc, reduce_lr_acc], shuffle=False)
+batch_size = 128
+history = model.fit(X_train, y_train, batch_size=batch_size, epochs=15, verbose=1, validation_data=(X_test, y_test), callbacks=[callback, mc, reduce_lr_acc], shuffle=False)
+
+#saver = tf.compat.v1.train.Saver() 
+#sess = tf.compat.v1.keras.backend.get_session() 
+#saver.save(sess, 'keras_session/session.ckpt') 
+
