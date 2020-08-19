@@ -2,22 +2,96 @@
 <html>
 
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../static/css/style.css">
+  <style>
+    #he {
+      opacity: {{ he }};
+    }
+
+    #bw {
+      opacity: {{ bw }};
+    }
+
+    #ni {
+      opacity: {{ ni }};
+    }
+
+    #th {
+      opacity: {{ th }};
+    }
+
+    #sn {
+      opacity: {{ sn }};
+    }
+
+    #sh {
+      opacity: {{ sh }};
+    }
+
+    #sa {
+      opacity: {{ sa }};
+    }
+
+    #mv {
+      opacity: {{ mv }};
+    }
+
+    #rp {
+      opacity: {{ rp }};
+    }
+
+    #by {
+      opacity: {{ by }};
+    }
+
+    #nw {
+      opacity: {{ nw }};
+    }
+
+    #bb {
+      opacity: {{ bb }};
+    }
+  </style>
 
 </head>
 
 <body>
   <div class="content">
     <div class="output container">
-      {% if prediction %}
+      <div class="map">
+        <img id="de" src="../static/images/de.png"></img>
+        {% if name %}
+        <div class="legend"><p>100</p><p id="prop">propability</p><p>0</p></div>
+        <h3>{{ name }}</h3>
+        <img id="he" class="state" src="../static/images/he.png"></img>
+        <img id="by" class="state" src="../static/images/by.png"></img>
+        <img id="th" class="state" src="../static/images/th.png"></img>
+        <img id="sn" class="state" src="../static/images/sn.png"></img>
+        <img id="sa" class="state" src="../static/images/sa.png"></img>
+        <img id="rp" class="state" src="../static/images/rp.png"></img>
+        <img id="mv" class="state" src="../static/images/mv.png"></img>
+        <img id="bb" class="state" src="../static/images/bb.png"></img>
+        <img id="sh" class="state" src="../static/images/sh.png"></img>
+        <img id="bw" class="state" src="../static/images/bw.png"></img>
+        <img id="nw" class="state" src="../static/images/nw.png"></img>
+        <img id="ni" class="state" src="../static/images/ni.png"></img>
+        {% endif %}
+
+      </div>
+      <!--       {% if prediction %}
       <p>{{ prediction }}</p>
-      {% endif %}
+      {% endif %} -->
     </div>
     <div class="input container">
+      <h2>Location Identifier</h2>
       <form class="input_form" action="/" method="POST">
-        <input class="textInput" autocomplete="off" placeholder="some name" type="text" id="name" name="name">
+        <input class="textInput" autocomplete="off" type="text" id="name" name="name">
         <input class="submit" type="submit" value="Predict">
       </form>
+      <p>This ML-Model learnt from 24000 real locations how their name relates to their geographical location. With an
+        accuracy of 33% it is able to identify the federal state the location belongs to just by looking at its
+        name.
     </div>
   </div>
 
