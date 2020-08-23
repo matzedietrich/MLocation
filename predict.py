@@ -16,8 +16,7 @@ tf.random.set_seed(graph_level_seed)
 
 
 from tensorflow.compat.v1.keras import backend as k
-config = tf.compat.v1.ConfigProto(intra_op_parallelism_threads=1, inter_op_parallelism_threads=1,
-allow_soft_placement=True, device_count = {'CPU': 1})
+config = tf.compat.v1.ConfigProto(intra_op_parallelism_threads=1, inter_op_parallelism_threads=1, allow_soft_placement=True, device_count = {'CPU': 1})
 sess = tf.compat.v1.Session(graph=tf.compat.v1.get_default_graph(),config=config)
 k.set_session(sess)
 
@@ -46,8 +45,7 @@ char_index = []
 
 
 col_list = ["name", "state"]
-df = pd.read_csv('data/geographic_names_dataset.csv',
-                 sep=";", usecols=col_list)
+df = pd.read_csv('data/geographic_names_dataset.csv', sep=";", usecols=col_list)
 
 names = df['name'].apply(lambda x: str(x).lower())
 states = df['state']
@@ -99,8 +97,7 @@ model = tf.keras.models.load_model('test_model2')
 #saver.restore(sess,'keras_session/session.ckpt') 
 
 
-dict_answer = ['Schleswig-Holstein', 'Niedersachsen', 'Nordrhein-Westfalen', 'Hessen', 'Rheinland-Pfalz',
-               'Baden-Württemberg', 'Bayern', 'Brandenburg', 'Mecklenburg-Vorpommern', 'Sachsen', 'Sachsen-Anhalt', 'Thüringen']
+dict_answer = ['Schleswig-Holstein', 'Niedersachsen', 'Nordrhein-Westfalen', 'Hessen', 'Rheinland-Pfalz', 'Baden-Württemberg', 'Bayern', 'Brandenburg', 'Mecklenburg-Vorpommern', 'Sachsen', 'Sachsen-Anhalt', 'Thüringen']
 
 
 def predictStateFrom(input):
