@@ -1,20 +1,22 @@
+# trying to set the python hash seed from script (not working on windows)
 import os
 os.environ['PYTHONHASHSEED'] = '0'
 os.environ['CUDA_VISIBLE_DEVICES']='-1'
 os.environ['TF_CUDNN_USE_AUTOTUNE'] ='0'
 
+#set random seed for random and numpy.random
 import numpy as np
 import random as rn
 rn.seed(1)
 np.random.seed(1)
 
-# set random seed for tensorflow
+# import tensorflow set random seed for tensorflow
 import tensorflow as tf
 graph_level_seed = 1
 operation_level_seed = 2
 tf.random.set_seed(graph_level_seed)
 
-
+# force use of CPU
 from tensorflow.compat.v1.keras import backend as k
 config = tf.compat.v1.ConfigProto(intra_op_parallelism_threads=1, inter_op_parallelism_threads=1,
 allow_soft_placement=True, device_count = {'CPU': 1})
@@ -25,11 +27,12 @@ k.set_session(sess)
 tf.config.threading.set_intra_op_parallelism_threads(1)
 tf.config.threading.set_inter_op_parallelism_threads(1)
 
-
+# force manual variable initialization
 from tensorflow.compat.v1.keras.backend import manual_variable_initialization
 manual_variable_initialization(True)
 
 
+#importing pandas & tensorflow functions
 import pandas as pd
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Embedding, Dense, Activation, Dropout, LSTM, Bidirectional

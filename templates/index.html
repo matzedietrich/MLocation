@@ -61,8 +61,8 @@
     <div class="output container">
       <div class="map">
         <img id="de" src="../static/images/de.png"></img>
-        {% if name %}
         <div class="legend"><p>100</p><p id="prop">propability</p><p>0</p></div>
+        {% if name %}
         <h3>{{ name }}</h3>
         <img id="he" class="state" src="../static/images/he.png"></img>
         <img id="by" class="state" src="../static/images/by.png"></img>
@@ -84,7 +84,7 @@
       {% endif %} -->
     </div>
     <div class="input container">
-      <h2>Location Identifier</h2>
+      <h2>Name Localizer</h2>
       <form class="input_form" action="/" method="POST">
         <input class="textInput" autocomplete="off" type="text" id="name" name="name">
         <input class="submit" type="submit" value="Predict">
