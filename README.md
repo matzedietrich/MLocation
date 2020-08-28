@@ -1,4 +1,4 @@
-# MLocation
+# Name Localizer
 This is my first project working with machine learning. It is all about identifying locations based on similiarities in their names in specific regions of germany.
 
 
